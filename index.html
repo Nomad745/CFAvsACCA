@@ -114,7 +114,7 @@
                         <p class="text-sm text-gray-500 mt-2">体系完备 · 覆盖广泛 · 稳健职业路径</p>
                         <ul class="mt-4 space-y-2 text-gray-700">
                             <li class="flex items-start"><span class="text-2xl mr-3 text-blue-500">🏢</span> 核心雇主覆盖四大与跨国企业财务，胜任审计、税务与管理会计。</li>
-                            <li class="flex items-start"><span class="text-2xl mr-3 text-blue-500">🤝</span> 全球7,571+认可雇主，适配多行业财务管理与合规需求。</li>
+                            <li class="flex items-start"><span class="text-2xl mr-3 text-blue-500">🤝</span> 全球多家机构认可，适配多行业财务管理与合规需求。</li>
                         </ul>
                     </div>
                 </div>
@@ -519,14 +519,14 @@
             }
 
             // Career path logic
-            const careerNodes = document.querySelectorAll('.career-node');
-            const infoBox = document.getElementById('career-info-box');
+            const careerNodes = document。querySelectorAll('.career-node');
+            const infoBox = document。getElementById('career-info-box');
             let lastClickedNode = null;
 
             careerNodes.forEach(node => {
-                node.addEventListener('click', (e) => {
+                node.addEventListener('click'， (e) => {
                     e.stopPropagation();
-                    const info = node.dataset.info;
+                    const info = node。dataset。info;
                     infoBox.textContent = info;
                     infoBox.classList.remove('hidden');
 

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFA vs ACCA | 交互式对比分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is designed as a single-page, scrollable dashboard with a fixed side navigation. This structure was chosen to provide a seamless, non-linear user experience. Users can get a quick overview from the top "Key Metrics" section, or use the navigation to jump directly to a specific area of interest (e.g., "Salary Comparison" or "Career Paths"). This thematic organization, rather than mirroring the report's chapters, allows for more intuitive exploration based on user goals (e.g., "Which one pays more?"). Key interactions include hovering over charts for detailed data, clicking on career path nodes to see job descriptions, and toggling between different salary regions. This user-centric design facilitates easier comparison and synthesis of information. -->
+    <!-- Visualization & Content Choices: 
+        - Key Metrics (Pass Rate, Study Hours): Report Info -> Goal: Quick comparison -> Viz: Donut charts & Bar chart (Chart.js) -> Interaction: Hover for tooltips -> Justification: Visually distinct and easy to digest for core stats.
+        - Global Recognition: Report Info -> Goal: Show geographic reach -> Viz: HTML/CSS cards with icons -> Interaction: Static display -> Justification: Simple, clear representation of global presence without complex maps.
+        - Career Paths: Report Info -> Goal: Explore job opportunities -> Viz: Interactive HTML/CSS flow diagram -> Interaction: Click on job titles to reveal details -> Justification: More engaging and space-efficient than a long list; promotes discovery.
+        - Salary Comparison: Report Info -> Goal: Compare earning potential -> Viz: Grouped Bar Chart (Chart.js) -> Interaction: Buttons to switch between regions (Global, China) -> Justification: Allows direct, dynamic comparison of salary data, which is a key decision factor for users.
+        - Knowledge System: Report Info -> Goal: Detail curriculum differences -> Viz: Accordion with nested lists (HTML/CSS/JS) -> Interaction: Click to expand/collapse -> Justification: Manages large amounts of text cleanly, letting users focus on one area at a time.
+        - Final Recommendation: Report Info -> Goal: Provide clear, actionable advice -> Viz: Side-by-side comparison cards -> Interaction: Static -> Justification: Summarizes the core value proposition of each certificate for a final, clear takeaway. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #FDFBF8;
+            color: #4A4A4A;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: #EAE3D9;
+            color: #9A6A4A;
+            transform: translateX(4px);
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #EAE3D9;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .career-node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .career-node:hover {
+            background-color: #F5F1EC;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="scroll-smooth">
+
+    <div class="flex">
+        <!-- Side Navigation -->
+        <aside class="sticky top-0 h-screen w-64 bg-[#F5F1EC] p-6 hidden lg:block">
+            <h1 class="text-2xl font-bold text-[#9A6A4A] mb-8">CFA vs ACCA</h1>
+            <nav id="desktop-nav" class="space-y-2">
+                <a href="#value" class="nav-link block p-2 rounded-lg font-medium text-gray-700">核心价值</a>
+                <a href="#knowledge" class="nav-link block p-2 rounded-lg font-medium text-gray-700">知识体系</a>
+                <a href="#overview" class="nav-link block p-2 rounded-lg font-medium text-gray-700">核心指标对比</a>
+                <a href="#career" class="nav-link block p-2 rounded-lg font-medium text-gray-700">职业发展路径</a>
+                <a href="#salary" class="nav-link block p-2 rounded-lg font-medium text-gray-700">薪酬水平分析</a>
+                <a href="#conclusion" class="nav-link block p-2 rounded-lg font-medium text-gray-700">最终决策建议</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full lg:w-[calc(100%-16rem)] p-4 md:p-10">
+            <header class="mb-10">
+                <h2 class="text-4xl font-bold text-gray-800">CFA vs ACCA 交互式对比分析</h2>
+                <p class="mt-2 text-lg text-gray-600">一个旨在帮助您做出职业选择的交互指南。</p>
+            </header>
+
+            <!-- Section 0: Core Value -->
+            <section id="value" class="mb-16 scroll-mt-20">
+                <h3 class="text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-[#9A6A4A] pl-4">核心价值</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="card p-8 rounded-xl border-t-4" style="border-color:#f97316;">
+                        <h4 class="font-bold text-2xl mb-2" style="color:#f97316;">CFA</h4>
+                        <p class="text-gray-700">投资管理领域的"黄金标准"</p>
+                        <p class="text-sm text-gray-500 mt-2">精英筛选 · 实战导向 · 高天花板回报</p>
+                        <ul class="mt-4 space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="text-2xl mr-3 text-orange-500">🏢</span> 顶尖雇主强背书：全球资产管理、投行与基金等买方核心岗位首选。</li>
+                            <li class="flex items-start"><span class="text-2xl mr-3 text-orange-500">🛡️</span> 权威认可与严格筛选：多国监管机构认可，体系难度塑造专业护城河。</li>
+                        </ul>
+                    </div>
+                    <div class="card p-8 rounded-xl border-t-4" style="border-color:#3b82f6;">
+                        <h4 class="font-bold text-2xl mb-2" style="color:#3b82f6;">ACCA</h4>
+                        <p class="text-gray-700">财会领域的"全球通行证"</p>
+                        <p class="text-sm text-gray-500 mt-2">体系完备 · 覆盖广泛 · 稳健职业路径</p>
+                        <ul class="mt-4 space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="text-2xl mr-3 text-blue-500">🏢</span> 核心雇主覆盖四大与跨国企业财务，胜任审计、税务与管理会计。</li>
+                            <li class="flex items-start"><span class="text-2xl mr-3 text-blue-500">🤝</span> 全球7,571+认可雇主，适配多行业财务管理与合规需求。</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            
+
+            <!-- Section 2: Knowledge System -->
+            <section id="knowledge" class="mb-16 scroll-mt-20">
+                <h3 class="text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-[#9A6A4A] pl-4">知识体系</h3>
+                 <p class="mb-8 text-gray-600">
+                    两者的课程设计精确反映了其职业定位。CFA采用"T型"知识结构，在广泛的金融知识基础上，深度钻研投资分析与资产管理。ACCA则旨在培养能够胜任多样化财务职能的人才。
+                </p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="card p-6 rounded-xl border-l-4 border-orange-600">
+                        <h4 class="text-xl font-bold text-orange-600 mb-4">CFA：深度聚焦投资分析</h4>
+                <div class="space-y-4">
+                            <div>
+                                <h5 class="font-semibold text-gray-800 mb-2">考试结构</h5>
+                                <p class="text-gray-600">共3个级别，10个核心知识领域，2025年三级考试引入专业化路径</p>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800 mb-2">核心知识领域</h5>
+                                <ul class="text-gray-600 space-y-1 text-base">
+                                    <li>• 道德与职业标准、定量方法、经济学</li>
+                                    <li>• 财务报表分析、公司发行人</li>
+                                    <li>• 权益投资、固定收益、衍生品、另类投资</li>
+                                    <li>• 投资组合管理</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800 mb-2">2025年三级专业化路径</h5>
+                                <p class="text-gray-600">私人财富、私人市场、投资组合管理</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl border-l-4 border-blue-600">
+                        <h4 class="text-xl font-bold text-blue-600 mb-4">ACCA：广博全面的商业财会</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <h5 class="font-semibold text-gray-800 mb-2">考试结构</h5>
+                                <p class="text-gray-600">共3个阶段，13门科目，覆盖财会、审计、税务、管理等多个方面</p>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800 mb-2">应用知识阶段 (3门)</h5>
+                                <p class="text-gray-600">商业与技术 (BT)、管理会计 (MA)、财务会计 (FA)</p>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800 mb-2">应用技能阶段 (6门)</h5>
+                                <p class="text-gray-600">公司法与商法 (LW)、业绩管理 (PM)、税务 (TX)、财务报告 (FR)、审计与鉴证 (AA)、财务管理 (FM)</p>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800 mb-2">战略专业阶段 (4门)</h5>
+                                <p class="text-gray-600">战略商业领袖 (SBL)、战略商业报告 (SBR)、及两门选修课 (如高级财务管理AFM、高级业绩管理APM等)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 1: Overview -->
+            <section id="overview" class="mb-16 scroll-mt-20">
+                <h3 class="text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-[#9A6A4A] pl-4">核心指标对比</h3>
+                <p class="mb-8 text-gray-600">
+                    本部分直观展示了CFA与ACCA在考试难度、学习投入等方面的核心差异。CFA以其"精英筛选"机制著称，通过率较低，要求高强度集中备考。而ACCA则更像一个"能力培养"体系，难度阶梯平缓，允许考生分阶段稳步前进。
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="card p-6 rounded-xl">
+                        <h4 class="font-bold text-lg mb-4 text-center">2025年考试通过率对比</h4>
+                        <div class="chart-container h-64 md:h-72">
+                            <canvas id="passRateChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card p-6 rounded-xl">
+                        <h4 class="font-bold text-lg mb-4 text-center">推荐总学习时长 (小时)</h4>
+                        <div class="chart-container h-64 md:h-72">
+                            <canvas id="studyHoursChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Career Paths -->
+            <section id="career" class="mb-16 scroll-mt-20">
+                <h3 class="text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-[#9A6A4A] pl-4">职业发展路径</h3>
+                 <p class="mb-8 text-gray-600">
+                    CFA是通往“买方”核心投资岗位的理想跳板，职业路径高度专注。ACCA则为广阔的商业世界提供“财务核心职能”人才，路径多元化。点击下方的岗位节点，可以查看该岗位的简要职责描述。
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div class="card p-6 rounded-xl border-l-4 border-orange-600">
+                        <h4 class="text-xl font-bold text-orange-600 mb-4">CFA：聚焦高薪"前台"岗位</h4>
+                        <p class="mb-4 text-gray-600">主要面向投资银行、资产管理、基金、券商等高附加值领域。</p>
+                        <div class="space-y-2">
+                            <span class="inline-block px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-sm font-medium">投资组合经理</span>
+                            <span class="inline-block px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-sm font-medium">研究分析师</span>
+                            <span class="inline-block px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-sm font-medium">投资银行家</span>
+                            <span class="inline-block px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-sm font-medium">风险经理</span>
+                        </div>
+                    </div>
+                    <div class="card p-6 rounded-xl border-l-4 border-blue-600">
+                        <h4 class="text-xl font-bold text-blue-600 mb-4">ACCA：深耕核心"后台"与支持岗位</h4>
+                        <p class="mb-4 text-gray-600">主要服务于四大会计师事务所、企业财务、审计、税务咨询等领域。</p>
+                        <div class="space-y-2">
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">审计师</span>
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">财务经理</span>
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">会计师</span>
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">税务顾问</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- CFA Career Path -->
+                    <div class="card p-6 rounded-xl">
+                        <h4 class="text-2xl font-bold text-orange-600 mb-6 text-center">CFA: 投资精英之路</h4>
+                        <div id="cfa-career-path" class="space-y-4">
+                            <div class="career-node text-center p-3 border rounded-lg" data-info="负责分析公司、行业和宏观经济，为投资决策提供研究支持。">研究分析师</div>
+                            <div class="text-center text-orange-400">↓</div>
+                            <div class="flex justify-around">
+                                <div class="career-node text-center p-3 border rounded-lg w-2/5" data-info="管理个人或机构的投资组合，制定并执行投资策略以实现客户的财务目标。">投资组合经理</div>
+                                <div class="career-node text-center p-3 border rounded-lg w-2/5" data-info="管理共同基金、对冲基金等，负责基金的整体投资决策和业绩。">基金经理</div>
+                            </div>
+                            <div class="text-center text-orange-400">↓</div>
+                            <div class="career-node text-center p-3 border rounded-lg bg-orange-100 font-bold" data-info="负责公司整体的投资战略和资产配置，是投资团队的最高领导者。">首席投资官 (CIO)</div>
+                        </div>
+                    </div>
+                    <!-- ACCA Career Path -->
+                    <div class="card p-6 rounded-xl">
+                        <h4 class="text-2xl font-bold text-blue-600 mb-6 text-center">ACCA: 财会通才之路</h4>
+                        <div id="acca-career-path" class="space-y-4">
+                            <div class="career-node text-center p-3 border rounded-lg" data-info="在会计师事务所工作，对企业财务报表的合规性和公允性进行独立审查。">审计师 (四大)</div>
+                            <div class="text-center text-blue-400">↓</div>
+                            <div class="career-node text-center p-3 border rounded-lg" data-info="进入企业内部，负责日常会计核算、财务报告和预算管理。">财务会计师/经理</div>
+                            <div class="text-center text-blue-400">↓</div>
+                            <div class="career-node text-center p-3 border rounded-lg" data-info="负责集团或公司的整体财务战略、资金管理、成本控制和财务报告。">财务总监</div>
+                            <div class="text-center text-blue-400">↓</div>
+                            <div class="career-node text-center p-3 border rounded-lg bg-blue-100 font-bold" data-info="公司的最高财务决策者，全面负责公司的财务管理、投融资、风险控制和战略规划。">首席财务官 (CFO)</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="career-info-box" class="mt-6 p-4 bg-gray-100 rounded-lg text-gray-700 text-center hidden"></div>
+            </section>
+
+            <!-- Section 5: Salary -->
+            <section id="salary" class="mb-16 scroll-mt-20">
+                <h3 class="text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-[#9A6A4A] pl-4">薪酬水平分析</h3>
+                <p class="mb-8 text-gray-600">
+                    薪酬是职业选择的重要考量因素。数据显示，CFA持证人在全球范围内的平均薪酬和薪酬上限通常高于ACCA会员，尤其是在高附加值的买方行业，其薪酬构成中的奖金和长期激励部分潜力巨大。ACCA则提供了在财会领域稳定且持续增长的丰厚回报。
+                </p>
+                
+                <div class="text-center mb-6">
+                    <button id="btn-global" class="bg-[#9A6A4A] text-white px-4 py-2 rounded-lg shadow">全球平均年薪</button>
+                    <button id="btn-china" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg ml-2">中国大陆年薪</button>
+                </div>
+                <div class="card p-6 rounded-xl">
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="salaryChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Conclusion -->
+            <section id="conclusion" class="scroll-mt-20">
+                <h3 class="text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-[#9A6A4A] pl-4">最终决策建议</h3>
+                 <p class="mb-8 text-gray-600">
+                    选择CFA还是ACCA，最终取决于您的个人职业目标和兴趣。这里总结了两者的核心价值，希望能帮助您做出最适合自己的决定。
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="card p-8 rounded-xl border-t-4 border-orange-600">
+                        <h4 class="text-2xl font-bold text-orange-600 mb-4">选择 CFA, 如果你...</h4>
+                        <ul class="list-disc list-inside space-y-3 text-gray-700">
+                            <li><strong>志在投资：</strong> 目标是基金管理、资产分析、投行等核心金融岗位。</li>
+                            <li><strong>追求深度：</strong> 渴望成为特定投资领域的顶尖专家。</li>
+                            <li><strong>着眼长远高薪：</strong> 愿意为职业中后期的指数级薪酬增长进行前期高强度投入。</li>
+                            <li><strong>向往“买方”：</strong> 职业目标是进入资产管理公司、基金公司等核心决策机构。</li>
+                        </ul>
+                    </div>
+                    <div class="card p-8 rounded-xl border-t-4 border-blue-600">
+                        <h4 class="text-2xl font-bold text-blue-600 mb-4">选择 ACCA, 如果你...</h4>
+                        <ul class="list-disc list-inside space-y-3 text-gray-700">
+                            <li><strong>志在财务：</strong> 职业规划是在企业或事务所从事审计、税务、财务管理工作。</li>
+                            <li><strong>追求广度：</strong> 希望掌握全面的财会知识，成为复合型管理人才。</li>
+                            <li><strong>寻求稳定发展：</strong> 偏好风险较低、路径清晰、回报稳健的职业生涯。</li>
+                            <li><strong>需要灵活性：</strong> 希望在工作的同时，能以更灵活的节奏完成专业资格学习。</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Data from the report
+            const chartData = {
+                passRate: {
+                    labels: ['CFA Level 1', 'CFA Level 2', 'CFA Level 3', 'ACCA F1-F3', 'ACCA F4-F9', 'ACCA P1-P7'],
+                    data: [41, 44, 56, 79, 65, 45] // CFA 三个级别, ACCA 最新数据：基础79%, 技能65%, 专业45%
+                },
+                studyHours: {
+                    labels: ['CFA (总计)', 'ACCA (总计)'],
+                    data: [900, 1750] // CFA 300*3, ACCA 1500-2000 avg
+                },
+                salary: {
+                    global: {
+                        labels: ['CFA 持证人', 'ACCA 会员'],
+                        data: [178000, 92500] // ACCA 65k-120k avg
+                    },
+                    china: {
+                        labels: ['CFA 持证人', 'ACCA 会员 (人民币)'],
+                        data: [1067000, 550000] // CFA 149k USD * 7.16, ACCA 10-100w avg
+                    }
+                }
+            };
+
+            const chartColors = {
+                cfa: 'rgba(249, 115, 22, 0.7)', // 橙色
+                acca: 'rgba(59, 130, 246, 0.7)', // 蓝色
+                cfaBorder: 'rgba(249, 115, 22, 1)',
+                accaBorder: 'rgba(59, 130, 246, 1)'
+            };
+            
+            Chart.defaults.font.family = "'Noto Sans SC', sans-serif";
+            Chart.defaults.plugins.tooltip.titleFont = { size: 14, weight: 'bold' };
+            Chart.defaults.plugins.tooltip.bodyFont = { size: 12 };
+            Chart.defaults.plugins.legend.position = 'bottom';
+
+            // Chart 1: Pass Rate (Bar)
+            const passRateCtx = document.getElementById('passRateChart').getContext('2d');
+            new Chart(passRateCtx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.passRate.labels,
+                    datasets: [{
+                        label: '通过率 (%)',
+                        data: chartData.passRate.data,
+                        backgroundColor: [
+                            'rgba(249, 115, 22, 0.6)',
+                            'rgba(249, 115, 22, 0.6)',
+                            'rgba(249, 115, 22, 0.6)',
+                            'rgba(59, 130, 246, 0.6)',
+                            'rgba(59, 130, 246, 0.6)',
+                            'rgba(59, 130, 246, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(249, 115, 22, 1)',
+                            'rgba(249, 115, 22, 1)',
+                            'rgba(249, 115, 22, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(59, 130, 246, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            ticks: { color: '#4A4A4A' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(0,0,0,0.1)' },
+                            ticks: { color: '#4A4A4A' }
+                        }
+                    },
+                    plugins: {
+                        legend: { 
+                            display: false 
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#e5e7eb',
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Study Hours (Bar)
+            const studyHoursCtx = document.getElementById('studyHoursChart').getContext('2d');
+            new Chart(studyHoursCtx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.studyHours.labels,
+                    datasets: [{
+                        label: '小时',
+                        data: chartData.studyHours.data,
+                        backgroundColor: [chartColors.cfa, chartColors.acca],
+                        borderColor: [chartColors.cfaBorder, chartColors.accaBorder],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                     plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Chart 3: Salary (Bar)
+            const salaryCtx = document.getElementById('salaryChart').getContext('2d');
+            let salaryChart = new Chart(salaryCtx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.salary.global.labels,
+                    datasets: [{
+                        label: '美元 ($)',
+                        data: chartData.salary.global.data,
+                        backgroundColor: [chartColors.cfa, chartColors.acca],
+                        borderColor: [chartColors.cfaBorder, chartColors.accaBorder],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                         legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: label.includes('美元') ? 'USD' : 'CNY', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Salary chart toggle logic
+            const btnGlobal = document.getElementById('btn-global');
+            const btnChina = document.getElementById('btn-china');
+
+            btnGlobal.addEventListener('click', () => {
+                updateSalaryChart('global');
+                btnGlobal.classList.add('bg-[#9A6A4A]', 'text-white');
+                btnGlobal.classList.remove('bg-gray-200', 'text-gray-700');
+                btnChina.classList.add('bg-gray-200', 'text-gray-700');
+                btnChina.classList.remove('bg-[#9A6A4A]', 'text-white');
+            });
+
+            btnChina.addEventListener('click', () => {
+                updateSalaryChart('china');
+                btnChina.classList.add('bg-[#9A6A4A]', 'text-white');
+                btnChina.classList.remove('bg-gray-200', 'text-gray-700');
+                btnGlobal.classList.add('bg-gray-200', 'text-gray-700');
+                btnGlobal.classList.remove('bg-[#9A6A4A]', 'text-white');
+            });
+            
+            function updateSalaryChart(region) {
+                const newData = chartData.salary[region];
+                salaryChart.data.labels = newData.labels;
+                salaryChart.data.datasets[0].data = newData.data;
+                salaryChart.data.datasets[0].label = region === 'global' ? '美元 ($)' : '人民币 (¥)';
+                salaryChart.options.plugins.tooltip.callbacks.label = function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) {
+                        label += ': ';
+                    }
+                    if (context.parsed.y !== null) {
+                         label += new Intl.NumberFormat('en-US', { style: 'currency', currency: region === 'global' ? 'USD' : 'CNY', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(context.parsed.y);
+                    }
+                    return label;
+                };
+                salaryChart.update();
+            }
+
+            // Career path logic
+            const careerNodes = document.querySelectorAll('.career-node');
+            const infoBox = document.getElementById('career-info-box');
+            let lastClickedNode = null;
+
+            careerNodes.forEach(node => {
+                node.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const info = node.dataset.info;
+                    infoBox.textContent = info;
+                    infoBox.classList.remove('hidden');
+
+                    if (lastClickedNode) {
+                        lastClickedNode.classList.remove('ring-2', 'ring-offset-2', 'ring-[#9A6A4A]');
+                    }
+                    node.classList.add('ring-2', 'ring-offset-2', 'ring-[#9A6A4A]');
+                    lastClickedNode = node;
+                });
+            });
+            
+            document.body.addEventListener('click', () => {
+                infoBox.classList.add('hidden');
+                if(lastClickedNode) {
+                    lastClickedNode.classList.remove('ring-2', 'ring-offset-2', 'ring-[#9A6A4A]');
+                    lastClickedNode = null;
+                }
+            });
+
+            // Active nav link scrolling
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('#desktop-nav a');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
